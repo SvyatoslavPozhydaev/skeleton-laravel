@@ -1,0 +1,48 @@
+version: '3.6'
+
+services:
+
+  web:
+    build: ./.docker/backend
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html/public
+      APACHE_RUN_USER: "#1000"
+    depends_on:
+      - db
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - 8000:80
+    working_dir: /var/www/html
+
+  frontend:
+    image: "node:10"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/home/node/app
+    tty: true
+    expose:
+      - "3000"
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123123
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    command: --innodb-flush-method=O_DSYNC --innodb-use-native-aio=0 --log_bin=ON
+    volumes:
+      - .docker/db/data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 6080:8080
