@@ -1,3 +1,5 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import $ from 'jquery';
 // Uncomment for use BOOTSTAP4
 // window.Popper = require('popper.js').default;

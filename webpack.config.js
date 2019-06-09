@@ -59,9 +59,7 @@ const styleLoader = (isLoadResources = true, isSassSyntax = true) => {
             postCssFlexBugsFixes(),
             postCssPresetEnv(),
             postCssUrl(),
-            postCssAutoprefixer({
-              browsers: ['ie >= 9', 'last 4 version', '> 1%', 'safari >= 9', 'ios >= 9'],
-            }),
+            postCssAutoprefixer(),
           );
           if (IS_PRODUCTION) {
             plugins.push(
@@ -109,9 +107,9 @@ const config = {
   },
   output: {
     filename: 'js/[name].js?[hash]',
+    chunkFilename: 'js/[name].js?[hash]',
     path: PATH_BUILD,
     publicPath: PATH_ASSET,
-    chunkFilename: 'js/[name].js?[hash]',
   },
   optimization: {
     minimizer: [
@@ -282,6 +280,12 @@ const config = {
   },
 
   plugins: [
+    new ManifestPlugin({
+      fileName: path.resolve(PATH_PUBLIC, 'mix-manifest.json'),
+      publicPath: PATH_ASSET,
+      basePath: PATH_BASE,
+      writeToFileEmit: true,
+    }),
     new ExtractCssChunks({
       filename: 'css/[name].css?[hash]',
       chunkFilename: 'css/[name].css?[hash]',
@@ -298,15 +302,6 @@ const config = {
     new VueLoaderPlugin(),
   ],
 };
-
-config.plugins.push(
-  new ManifestPlugin({
-    fileName: path.resolve(PATH_PUBLIC, 'mix-manifest.json'),
-    publicPath: PATH_ASSET,
-    basePath: PATH_BASE,
-    writeToFileEmit: true,
-  }),
-);
 
 
 module.exports = config;
